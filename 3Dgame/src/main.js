@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/Addons.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
 
 
 //Set up scene, camera, renderer
@@ -49,6 +50,13 @@ for (let i = 0; i < obstacleCount; i++) {
 
 
 }
+
+//Add a gOal Cube
+const goalGeometry = new THREE.BoxGeometry(1, 1, 1);
+const goalMaterial = new THREE.MeshStandardMaterial({ color: 0x00ffff });
+const goal = new THREE.Mesh(goalGeometry, goalMaterial);
+goal.position.set(4, 0.5, 4);
+scene.add(goal);
 
 //Light
 const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -111,7 +119,19 @@ for (const obstacle of obstacles) {
   break;
 
 
+  }
+  
 }
+
+//Check if cube raech the goal
+const goalBox = new THREE.Box3().setFromObject(goal);
+if (cubeBox.intersectsBox(goalBox)) {
+  console.log('🎉 You reached the goal!');
+document.getElementById('winMessage').style.display = 'block';
+  //Show an altert or stop the game
+  //alert('🎉 You Win!');
+  return;
+
   
 }
 
