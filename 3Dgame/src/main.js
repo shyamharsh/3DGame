@@ -20,6 +20,15 @@ audioLoader.load('/sounds/jump.mp3', function(buffer) {
   jumpSound.setVolume(0.5);
 });
 
+const bgMusic = new Audio(listener);
+
+audioLoader.load('/sounds/background.mp3', function(buffer) {
+  bgMusic.setBuffer(buffer);
+  bgMusic.setLoop(true);
+  bgMusic.setVolume(0.3); //Adjust volume
+  bgMusic.play(); //Start playing
+});
+
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.style.margin = '0'; //Ensure no Scroll
