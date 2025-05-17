@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { Audio, AudioListener, AudioLoader } from 'three';
 
 
 
@@ -7,6 +8,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
+
+const listener = new AudioListener();
+camera.add(listener);
+
+const jumpSound = new Audio(listener);
+const audioLoader = new AudioLoader();
+
+audioLoader.load('/sounds/jump.mp3', function(buffer) {
+  jumpSound.setBuffer(buffer);
+  jumpSound.setVolume(0.5);
+});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -81,11 +93,24 @@ scene.add(grid);
 let speed = 0.2;
 let move = { x: 0, z: 0 };
 
+let velocityY = 0;//Vertical speed
+let gravity = -0.01; // Gravity Strength
+let isOnGround = true; //Weather the cube is on the floor
+
 window.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowUp') move.z = -speed;
   if (e.key === 'ArrowDown') move.z = speed;
   if (e.key === 'ArrowLeft') move.x = -speed;
   if (e.key === 'ArrowRight') move.x = speed;
+
+  if (e.key === ' ' && isOnGround) {
+    velocityY = 0.2; // jump upward
+    isOnGround = false;
+
+    //play jump sound
+    if (jumpSound.isPlaying) jumpSound.stop(); //prevent overlapping
+    jumpSound.play();
+  }
 });
 
 window.addEventListener('keyup', () => {
@@ -105,6 +130,17 @@ function animate() {
   requestAnimationFrame(animate);
   cube.position.x += move.x;
   cube.position.z += move.z;
+
+  //Apply Gravity
+  velocityY += gravity;
+  cube.position.y += velocityY
+
+  //Collision with the floor (y=0.5 is floor)
+  if (cube.position.y <= 0.5) {
+    cube.position.y = 0.5;
+    velocityY = 0;
+    isOnGround = true;
+  }
 
   //Add Collision Detection(with bounding boxes)
 const cubeBox = new THREE.Box3().setFromObject(cube);
@@ -127,9 +163,9 @@ for (const obstacle of obstacles) {
 const goalBox = new THREE.Box3().setFromObject(goal);
 if (cubeBox.intersectsBox(goalBox)) {
   console.log('🎉 You reached the goal!');
-document.getElementById('winMessage').style.display = 'block';
+//document.getElementById('winMessage').style.display = 'block';
   //Show an altert or stop the game
-  //alert('🎉 You Win!');
+  alert('🎉 You Win!');
   return;
 
   
