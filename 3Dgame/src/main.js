@@ -29,6 +29,17 @@ audioLoader.load('/sounds/background.mp3', function(buffer) {
   bgMusic.play(); //Start playing
 });
 
+const muteButton = document.getElementById('muteButton');
+
+let isMuted = false;
+
+muteButton.addEventListener('click', () => {
+  isMuted = !isMuted;
+  bgMusic.setVolume(isMuted ? 0 : 0.3);
+  jumpSound.setVolume(isMuted ? 0 : 0.5);
+  muteButton.textContent = isMuted ? ' Unmute' : ' Mute';
+});
+
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.style.margin = '0'; //Ensure no Scroll
