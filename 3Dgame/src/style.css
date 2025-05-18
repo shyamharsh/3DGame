@@ -95,17 +95,19 @@ button:focus-visible {
   }
 
 }
-
-#winMessage {
+#winModal {
   display: none;
-  position: absolute;
-  top: 20px;
-  left: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 255, 0, 0.8);
-  color: #000;
-  padding: 10px 20px;
-  font-size: 24px;
-  border-radius: 10px;
-  z-index: 1000;
+  background: rgba(20, 20, 20, 0.95);
+  color: #00ffff;
+  padding: 40px 60px;
+  border-radius: 20px;
+  font-size: 3rem;
+  font-family: 'Arial Black', sans-serif;
+  z-index: 9999;
+  box-shadow: 0 0 40px #00ffffaa;
+  text-align: center;
 }

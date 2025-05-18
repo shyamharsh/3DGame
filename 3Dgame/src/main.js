@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Audio, AudioListener, AudioLoader } from 'three';
+import './style.css';
 
 
 
@@ -29,6 +30,12 @@ audioLoader.load('/sounds/background.mp3', function(buffer) {
   bgMusic.play(); //Start playing
 });
 
+const victorySound = new THREE.Audio(listener);
+audioLoader.load('/sounds/victory.mp3', (buffer) => {
+  victorySound.setBuffer(buffer);
+  victorySound.setVolume(0.5);
+});
+
 const muteButton = document.getElementById('muteButton');
 
 let isMuted = false;
@@ -38,6 +45,14 @@ muteButton.addEventListener('click', () => {
   bgMusic.setVolume(isMuted ? 0 : 0.3);
   jumpSound.setVolume(isMuted ? 0 : 0.5);
   muteButton.textContent = isMuted ? ' Unmute' : ' Mute';
+});
+
+const volumeSlider = document.getElementById('volumeSlider');
+
+volumeSlider.addEventListener('input', () => {
+  const volume = parseFloat(volumeSlider.value);
+  bgMusic.setVolume(volume);
+  jumpSound.setVolume(volume);
 });
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -118,12 +133,73 @@ let gravity = -0.01; // Gravity Strength
 let isOnGround = true; //Weather the cube is on the floor
 
 window.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowUp') move.z = -speed;
-  if (e.key === 'ArrowDown') move.z = speed;
-  if (e.key === 'ArrowLeft') move.x = -speed;
-  if (e.key === 'ArrowRight') move.x = speed;
+ // if (e.key === 'ArrowUp') move.z = -speed;
+  //if (e.key === 'ArrowDown') move.z = speed;
+  //if (e.key === 'ArrowLeft') move.x = -speed;
+  //if (e.key === 'ArrowRight') move.x = speed;
+  switch (e.key) {
+    case 'ArrowUp':
+    case 'w':
+    case 'W':
+      move.z = - speed;
+      break;
+    case 'ArrowDown':
+    case 's':
+    case 'S':
+      move.z = speed;
+      break;
+    case 'ArrowLeft':
+    case 'a':
+    case 'A':
+      move.x = -speed;
+      break;
+    case 'ArrowRight':
+    case 'd':
+    case 'D':
+      move.x = speed;
+      break;
+    case ' ':
+      if (isOnGround) {
+        velocityY = 0.2;
+        isOnGround = false;
 
-  if (e.key === ' ' && isOnGround) {
+        if (jumpSound.isPlaying) jumpSound.stop();
+        jumpSound.play();
+      }
+      break;
+      
+  }    
+  });
+  
+  window.addEventListener('keyup', (e) => {
+    switch (e.key) {
+      case 'ArrowUp':
+      case 'w':
+      case 'W':
+        if (move.z === -speed) move.z = 0;
+        break;
+      case 'ArrowDown':
+      case 's':
+      case 'S':
+        if (move.z === speed) move.z = 0;
+        break;
+      case 'ArrowLeft':
+      case 'a':
+      case 'A':
+        if (move.x === -speed) move.x = 0;
+        break;
+      case 'd':
+      case 'D':
+        if (move.x === speed) move.x = 0;
+        break;                    
+    }
+  });
+          
+        
+                            
+  
+
+ /* if (e.key === ' ' && isOnGround) {
     velocityY = 0.2; // jump upward
     isOnGround = false;
 
@@ -131,7 +207,7 @@ window.addEventListener('keydown', (e) => {
     if (jumpSound.isPlaying) jumpSound.stop(); //prevent overlapping
     jumpSound.play();
   }
-});
+});*/
 
 window.addEventListener('keyup', () => {
   move = { x: 0, z: 0 };
@@ -143,6 +219,23 @@ window.addEventListener('click', (event) => {
   const y = -(event.clientY / window.innerHeight) * 2 + 1;
   cube.position.x = x * 5;
   cube.position.z = y * 5;
+});
+
+const restartButton = document.getElementById('restartButton');
+
+restartButton.addEventListener('click', () => {
+  cube.position.set(0, 0.5, 0);
+  move = { x: 0, z: 0 };
+  velocityY = 0;
+  isOnGround = true;
+
+  document.getElementById('winModal').style.display = 'none';
+
+  if (!bgMusic.isPlaying && !isMuted) {
+    bgMusic.play();
+  }
+
+  console.log("Game Restarted!");
 });
 
 //Animation loop
@@ -185,7 +278,13 @@ if (cubeBox.intersectsBox(goalBox)) {
   console.log('🎉 You reached the goal!');
 //document.getElementById('winMessage').style.display = 'block';
   //Show an altert or stop the game
-  alert('🎉 You Win!');
+  //alert('🎉 You Win!');
+
+  bgMusic.stop();
+  victorySound.play();
+
+  //show pop up 
+  document.getElementById('winModal').style.display = 'block';
   return;
 
   
