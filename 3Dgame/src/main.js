@@ -3,7 +3,15 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Audio, AudioListener, AudioLoader } from 'three';
 import './style.css';
 
+//Texture loader
+const textureLoader = new THREE.TextureLoader();
+const playerTexture = textureLoader.load('/textures/player.jpg');
+const obstacleTexture = textureLoader.load('textures/obstacle.jpg');
+const floorTexture = textureLoader.load('/textures/floor.jpg');
 
+
+const moveDirection = new THREE.Vector3();
+const cameraDirection = new THREE.Vector3();
 
 //Set up scene, camera, renderer
 const scene = new THREE.Scene();
@@ -67,7 +75,7 @@ controls.enableDamping = true;
 
 //add a cube
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+const material = new THREE.MeshStandardMaterial({ map: playerTexture });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
@@ -79,24 +87,53 @@ scene.add(cube);
 //scene.add(obstacle);
 
 //Create multiple obstacles
-const obstacles = [];
-const obstacleCount = 5;
+//const obstacles = [];
+//const obstacleCount = 5;
 
-for (let i = 0; i < obstacleCount; i++) {
-  const obsGeometry = new THREE.BoxGeometry(1, 1, 1);
-  const obsMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000});
-  const obstacle = new THREE.Mesh(obsGeometry, obsMaterial);
+//for (let i = 0; i < obstacleCount; i++) {
+  //const obsGeometry = new THREE.BoxGeometry(1, 1, 1);
+  //const obsMaterial = new THREE.MeshStandardMaterial({ map: obstacleTexture });
+  //const obstacle = new THREE.Mesh(obsGeometry, obsMaterial);
+
+
 
   //Random position on the floor
-  obstacle.position.x = Math.random() * 10 - 5;
-  obstacle.position.z = Math.random() * 10 - 5;
-  obstacle.position.y = 0.5;// to lift it slightly above the floor
+  //obstacle.position.x = Math.random() * 10 - 5;
+  //bstacle.position.z = Math.random() * 10 - 5;
+  //obstacle.position.y = 0.5;// to lift it slightly above the floor
 
-  scene.add(obstacle);
-  obstacles.push(obstacle);
+  //scene.add(obstacle);
+  //obstacles.push(obstacle);
 
 
+//}
+
+const rows = 2;
+const cols = 7;
+const xSpacing = 2; // small gap so blocks aren't touching exactly
+const zSpacing = 5;
+
+const startZ = 1; // distance forward from player
+const centerX = 0;
+const obstacles = [];
+
+for (let i = 0; i < rows; i++) {
+  for (let j = 0; j < cols; j++) {
+    if (i === 2 && j === 3) continue;
+    const obsGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const obsMaterial = new THREE.MeshStandardMaterial({ map: obstacleTexture });
+    const obstacle = new THREE.Mesh(obsGeometry, obsMaterial);
+
+    // Positioning
+    obstacle.position.x = j * xSpacing - ((cols - 1) * xSpacing) / 2 + centerX;
+    obstacle.position.z = startZ + i * zSpacing; // rows stacked in Z
+    obstacle.position.y = 0.5; // lift above floor
+
+    scene.add(obstacle);
+    obstacles.push(obstacle);
+  }
 }
+
 
 //Add a gOal Cube
 const goalGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -112,7 +149,7 @@ scene.add(light);
 
 //Floor
 const floorGeometry = new THREE.PlaneGeometry(20, 20);
-const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x888888, side: THREE.DoubleSide });
+const floorMaterial = new THREE.MeshStandardMaterial({ map: floorTexture, side: THREE.DoubleSide });
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
@@ -209,9 +246,9 @@ window.addEventListener('keydown', (e) => {
   }
 });*/
 
-window.addEventListener('keyup', () => {
-  move = { x: 0, z: 0 };
-});
+//window.addEventListener('keyup', () => {
+ // move = { x: 0, z: 0 };
+//});
 
 //Mouse interaction (move cube to clicked position)
 window.addEventListener('click', (event) => {
@@ -243,6 +280,21 @@ function animate() {
   requestAnimationFrame(animate);
   cube.position.x += move.x;
   cube.position.z += move.z;
+
+  /*if (move.x !== 0 || move.z !== 0) {
+    camera.getWorldDirection(cameraDirection);
+    cameraDirection.y = 0;
+    cameraDirection.normalize();
+
+    const rightDirection = new THREE.Vector3().crossVectors(cameraDirection, new THREE.Vector3(0, 1, 0)).normalize();
+
+    //Combine movement
+    moveDirection.set(0, 0, 0);
+    moveDirection.addScaledVector(cameraDirection, move.z);
+    moveDirection.addScaledVector(rightDirection, move.x);
+
+    cube.position.add(moveDirection.multiplyScalar(speed));
+  }*/
 
   //Apply Gravity
   velocityY += gravity;
