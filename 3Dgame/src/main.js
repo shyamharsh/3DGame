@@ -77,6 +77,7 @@ controls.enableDamping = true;
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({ map: playerTexture });
 const cube = new THREE.Mesh(geometry, material);
+cube.position.set(6, 0.5, 1);
 scene.add(cube);
 
 //Add a another cube as obstacle
@@ -139,7 +140,7 @@ for (let i = 0; i < rows; i++) {
 const goalGeometry = new THREE.BoxGeometry(1, 1, 1);
 const goalMaterial = new THREE.MeshStandardMaterial({ color: 0x00ffff });
 const goal = new THREE.Mesh(goalGeometry, goalMaterial);
-goal.position.set(4, 0.5, 4);
+goal.position.set(6, 0.5, 8);
 scene.add(goal);
 
 //Light
@@ -225,6 +226,7 @@ window.addEventListener('keydown', (e) => {
       case 'A':
         if (move.x === -speed) move.x = 0;
         break;
+      case 'ArrowRight':  
       case 'd':
       case 'D':
         if (move.x === speed) move.x = 0;
@@ -278,8 +280,8 @@ restartButton.addEventListener('click', () => {
 //Animation loop
 function animate() {
   requestAnimationFrame(animate);
-  cube.position.x += move.x;
-  cube.position.z += move.z;
+  //cube.position.x += move.x;
+  //cube.position.z += move.z;
 
   /*if (move.x !== 0 || move.z !== 0) {
     camera.getWorldDirection(cameraDirection);
@@ -307,24 +309,43 @@ function animate() {
     isOnGround = true;
   }
 
+
+  //Predict Next Position
+  const nextPosition = cube.position.clone();
+  nextPosition.x += move.x;
+  nextPosition.z += move.z;
+
+  
+  //let willColide = false;
+
+
   //Add Collision Detection(with bounding boxes)
-const cubeBox = new THREE.Box3().setFromObject(cube);
+const predictedBox = new THREE.Box3().setFromObject(cube);
+predictedBox.translate(new THREE.Vector3(move.x, 0, move.z));
+
+//Check Collision with each obstacle
+let willCollide = false;
 
 for (const obstacle of obstacles) {
   const obstacleBox = new THREE.Box3().setFromObject(obstacle);
-  if (cubeBox.intersectsBox(obstacleBox)) {
-  console.log('Collision!');
-
-  cube.position.x -= move.x;
-  cube.position.z -= move.z;
+  if (predictedBox.intersectsBox(obstacleBox)) {
+  //console.log('Collision!');
+  willCollide = true;
   break;
 
-
+  
   }
+
+}
+//apply movement if no collision
+  if (!willCollide) {
+    cube.position.x = nextPosition.x;
+    cube.position.z = nextPosition.z;
   
 }
 
 //Check if cube raech the goal
+const cubeBox = new THREE.Box3().setFromObject(cube);
 const goalBox = new THREE.Box3().setFromObject(goal);
 if (cubeBox.intersectsBox(goalBox)) {
   console.log('🎉 You reached the goal!');
