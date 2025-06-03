@@ -3,6 +3,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Audio, AudioListener, AudioLoader } from 'three';
 import './style.css';
 
+//Add timer variables
+let startTime = null;
+let elapsedTime = 0;
+let timerRunning = false;
+
 //Texture loader
 const textureLoader = new THREE.TextureLoader();
 const playerTexture = textureLoader.load('/textures/player.jpg');
@@ -16,7 +21,7 @@ const cameraDirection = new THREE.Vector3();
 //Set up scene, camera, renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-//camera.position.z = 5;
+
 camera.position.set(0, 5, 10);
 camera.lookAt(0, 0, 0);
 
@@ -83,32 +88,6 @@ cube.position.set(6, 0.5, 1);
 scene.add(cube);
 
 
-/*function generateDefaultMapsObstacles() {}
-const rows = 2;
-const cols = 7;
-const xSpacing = 2; // small gap so blocks aren't touching exactly
-const zSpacing = 5;
-
-const startZ = 1; // distance forward from player
-const centerX = 0;
-const obstacles = [];*/
-
-/*for (let i = 0; i < rows; i++) {
-  for (let j = 0; j < cols; j++) {
-    if (i === 2 && j === 3) continue;
-    const obsGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const obsMaterial = new THREE.MeshStandardMaterial({ map: obstacleTexture });
-    const obstacle = new THREE.Mesh(obsGeometry, obsMaterial);
-
-    // Positioning
-    obstacle.position.x = j * xSpacing - ((cols - 1) * xSpacing) / 2 + centerX;
-    obstacle.position.z = startZ + i * zSpacing; // rows stacked in Z
-    obstacle.position.y = 0.5; // lift above floor
-
-    scene.add(obstacle);
-    obstacles.push(obstacle);
-  }
-}*/
 
 const obstacles = [];
 
@@ -277,24 +256,9 @@ window.addEventListener('keydown', (e) => {
         break;                    
     }
   });
-          
-        
-                            
-  
+                                 
 
- /* if (e.key === ' ' && isOnGround) {
-    velocityY = 0.2; // jump upward
-    isOnGround = false;
-
-    //play jump sound
-    if (jumpSound.isPlaying) jumpSound.stop(); //prevent overlapping
-    jumpSound.play();
-  }
-});*/
-
-//window.addEventListener('keyup', () => {
- // move = { x: 0, z: 0 };
-//});
+ 
 
 //Mouse interaction (move cube to clicked position)
 window.addEventListener('click', (event) => {
@@ -316,15 +280,7 @@ const maps = [
     goalPosition: new THREE.Vector3(6, 0.5, 10),
     obstacles: generateZigZagMap(4,5)
   },
-  /*{
-    name: 'Map 1',
-    goalPosition: new THREE.Vector3(6, 0.5, 8),
-    obstacles: [
-      { x: 0, y: 0.5, z: 5 },
-      { x: 2, y: 0.5, z:3 },
-      { x: -3, y: 0.5, z: 7 }
-    ]
-  },*/
+  
   
  {
   name: 'Map 2',
@@ -356,7 +312,12 @@ function loadMap(index) {
   goal.position.copy(selectedMap.goalPosition);
   cube.position.set(0, 0.5, 0);
   velocityY = 0;
-  isOnGround = true
+  isOnGround = true;
+
+  //Start the timer
+  startTime = performance.now();
+  timerRunning = true;
+  updateTimer();
 }
 
 loadMap(0);
@@ -436,24 +397,8 @@ restartButton.addEventListener('click', () => {
 //Animation loop
 function animate() {
   requestAnimationFrame(animate);
-  //cube.position.x += move.x;
-  //cube.position.z += move.z;
-
-  /*if (move.x !== 0 || move.z !== 0) {
-    camera.getWorldDirection(cameraDirection);
-    cameraDirection.y = 0;
-    cameraDirection.normalize();
-
-    const rightDirection = new THREE.Vector3().crossVectors(cameraDirection, new THREE.Vector3(0, 1, 0)).normalize();
-
-    //Combine movement
-    moveDirection.set(0, 0, 0);
-    moveDirection.addScaledVector(cameraDirection, move.z);
-    moveDirection.addScaledVector(rightDirection, move.x);
-
-    cube.position.add(moveDirection.multiplyScalar(speed));
-  }*/
-
+  updateTimer();
+  
   //Apply Gravity
   velocityY += gravity;
   cube.position.y += velocityY
@@ -470,9 +415,6 @@ function animate() {
   const nextPosition = cube.position.clone();
   nextPosition.x += move.x;
   nextPosition.z += move.z;
-
-  
-  //let willColide = false;
 
 
   //Add Collision Detection(with bounding boxes)
@@ -505,12 +447,11 @@ const cubeBox = new THREE.Box3().setFromObject(cube);
 const goalBox = new THREE.Box3().setFromObject(goal);
 if (cubeBox.intersectsBox(goalBox)) {
   console.log('🎉 You reached the goal!');
-//document.getElementById('winMessage').style.display = 'block';
-  //Show an altert or stop the game
-  //alert('🎉 You Win!');
 
   bgMusic.stop();
   victorySound.play();
+
+  timerRunning = false;
 
   //show pop up 
   document.getElementById('winModal').style.display = 'block';
@@ -520,9 +461,19 @@ if (cubeBox.intersectsBox(goalBox)) {
 }
 
 
+
   renderer.render(scene, camera);
   controls.update();
 }
+
+function updateTimer() {
+  if (timerRunning && startTime !== null) {
+    const now = performance.now();
+    elapsedTime = (now - startTime) / 1000;
+    document.getElementById('timer').textContent = `Time: ${elapsedTime.toFixed(2)}s`;
+  }
+}
+
 
 animate();
 window.loadMap = loadMap;
