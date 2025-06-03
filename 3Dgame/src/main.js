@@ -391,6 +391,10 @@ restartButton.addEventListener('click', () => {
     bgMusic.play();
   }
 
+  //Restart the timer
+  startTime = performance.now();
+  timerRunning = true;
+
   console.log("Game Restarted!");
 });
 
