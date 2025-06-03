@@ -5,6 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Three.js Game</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body style="margin:0; overflow:hidden;">
     <div id="audioControls" style="position: absolute; top: 10px; left: 10px; z-index: 1;">
@@ -13,6 +14,22 @@
       <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.3">
 
     </div>
+    <div id="mapSelection">
+      <p>Select a Map:</p>
+      <div class="map-option" onclick="loadMap(0)">
+        <canvas id="preview0" width="100" height="100"></canvas>
+        <button>Map 1</button>
+      </div>
+      <div class="map-option" onclick="loadMap(1)">
+        <canvas id="preview1" width="100" height="100"></canvas>
+        <button>Map 2</button>
+      </div>
+      <div class="map-option" onclick="loadMap(2)">
+        <canvas id="preview2" width="100" height="100"></canvas>
+        <button>Map 3</button>
+      </div>  
+    </div>
+
     <div id="winModal" style="display: none;">
       🎉 You Won!<br><br>
       <button id="restartButton">Restart Game</button>

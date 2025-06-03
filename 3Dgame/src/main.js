@@ -16,7 +16,9 @@ const cameraDirection = new THREE.Vector3();
 //Set up scene, camera, renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.z = 5;
+//camera.position.z = 5;
+camera.position.set(0, 5, 10);
+camera.lookAt(0, 0, 0);
 
 const listener = new AudioListener();
 camera.add(listener);
@@ -80,35 +82,8 @@ const cube = new THREE.Mesh(geometry, material);
 cube.position.set(6, 0.5, 1);
 scene.add(cube);
 
-//Add a another cube as obstacle
-//const obstacleGeometry = new THREE.BoxGeometry(1, 1, 1);
-//const obstacleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000});
-//const obstacle = new THREE.Mesh(obstacleGeometry, obstacleMaterial);
-//obstacle.position.set(2, 0, 0);
-//scene.add(obstacle);
 
-//Create multiple obstacles
-//const obstacles = [];
-//const obstacleCount = 5;
-
-//for (let i = 0; i < obstacleCount; i++) {
-  //const obsGeometry = new THREE.BoxGeometry(1, 1, 1);
-  //const obsMaterial = new THREE.MeshStandardMaterial({ map: obstacleTexture });
-  //const obstacle = new THREE.Mesh(obsGeometry, obsMaterial);
-
-
-
-  //Random position on the floor
-  //obstacle.position.x = Math.random() * 10 - 5;
-  //bstacle.position.z = Math.random() * 10 - 5;
-  //obstacle.position.y = 0.5;// to lift it slightly above the floor
-
-  //scene.add(obstacle);
-  //obstacles.push(obstacle);
-
-
-//}
-
+/*function generateDefaultMapsObstacles() {}
 const rows = 2;
 const cols = 7;
 const xSpacing = 2; // small gap so blocks aren't touching exactly
@@ -116,9 +91,9 @@ const zSpacing = 5;
 
 const startZ = 1; // distance forward from player
 const centerX = 0;
-const obstacles = [];
+const obstacles = [];*/
 
-for (let i = 0; i < rows; i++) {
+/*for (let i = 0; i < rows; i++) {
   for (let j = 0; j < cols; j++) {
     if (i === 2 && j === 3) continue;
     const obsGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -133,6 +108,75 @@ for (let i = 0; i < rows; i++) {
     scene.add(obstacle);
     obstacles.push(obstacle);
   }
+}*/
+
+const obstacles = [];
+
+function generateDefaultMapObstacles() {
+  const rows = 2;
+  const cols = 7;
+  const xSpacing = 2;
+  const zSpacing =  5;
+  const startz = 1;
+  const centerX = 0;
+
+  const generated = [];
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      if (i === 2 && j === 3) continue;
+
+      const x = j * xSpacing - ((cols - 1) * xSpacing) / 2 + centerX;
+      const z = startz + i * zSpacing;
+      const y = 0.5;
+
+      generated.push({ x, y, z });
+    }
+  }
+
+  return generated;
+
+}
+
+function generateObstacleGrid(rows, cols, xSpacing = 2, zSpacing = 3, centerX = 0, startZ = 1) {
+  const obstacles = [];
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      obstacles.push({
+        x: j * xSpacing - ((cols - 1) * xSpacing) / 2 + centerX,
+        y: 0.5,
+        z: startZ + i * zSpacing
+      });
+    }
+  }
+
+  return obstacles;
+}
+
+function generateZigZagMap(rows, cols, xSpacing = 2, zSpacing = 3, centerX = 0, startZ = 1) {
+  const obstacles = [];
+
+  for (let i = 0; i < rows; i++) {
+    const row = [];
+
+    for (let j = 0; j < cols; j++) {
+      const x = j * xSpacing - ((cols - 1) * xSpacing) / 2 + centerX;
+      const z = startZ + i * zSpacing;
+      const y = 0.5;
+      row.push({ x, y, z });
+    }
+
+    //Zig-Zag starting from row index 2
+    if (i >= 2 && i % 2 !== 0) {
+      row.reverse();
+    }
+
+    obstacles.push(...row);
+
+  }
+
+  return obstacles;
 }
 
 
@@ -147,6 +191,9 @@ scene.add(goal);
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(3, 3, 5).normalize();
 scene.add(light);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
 //Floor
 const floorGeometry = new THREE.PlaneGeometry(20, 20);
@@ -171,10 +218,7 @@ let gravity = -0.01; // Gravity Strength
 let isOnGround = true; //Weather the cube is on the floor
 
 window.addEventListener('keydown', (e) => {
- // if (e.key === 'ArrowUp') move.z = -speed;
-  //if (e.key === 'ArrowDown') move.z = speed;
-  //if (e.key === 'ArrowLeft') move.x = -speed;
-  //if (e.key === 'ArrowRight') move.x = speed;
+ 
   switch (e.key) {
     case 'ArrowUp':
     case 'w':
@@ -259,6 +303,118 @@ window.addEventListener('click', (event) => {
   cube.position.x = x * 5;
   cube.position.z = y * 5;
 });
+
+const maps = [
+  {
+
+    name: 'Default Grid',
+    goalPosition: new THREE.Vector3(6, 0.5, 8),
+    obstacles: generateDefaultMapObstacles()
+  },
+  {
+    name: 'Map 1',
+    goalPosition: new THREE.Vector3(6, 0.5, 10),
+    obstacles: generateZigZagMap(4,5)
+  },
+  /*{
+    name: 'Map 1',
+    goalPosition: new THREE.Vector3(6, 0.5, 8),
+    obstacles: [
+      { x: 0, y: 0.5, z: 5 },
+      { x: 2, y: 0.5, z:3 },
+      { x: -3, y: 0.5, z: 7 }
+    ]
+  },*/
+  
+ {
+  name: 'Map 2',
+  goalPosition: new THREE.Vector3(0, 0.5, 10),
+  obstacles: generateObstacleGrid(3, 8)
+ }
+];
+
+function loadMap(index) {
+  const selectedMap = maps[index];
+  //clear existing obstacles from scene
+  for (const obs of obstacles) {
+    scene.remove(obs);
+  }
+  
+  obstacles.length = 0;
+
+  for (const pos of selectedMap.obstacles) {
+    const obsGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const obsMaterial = new THREE.MeshStandardMaterial({ map: obstacleTexture });
+    const obstacle = new THREE.Mesh(obsGeometry, obsMaterial);
+    obstacle.position.set(pos.x, pos.y, pos.z);
+    scene.add(obstacle);
+    obstacles.push(obstacle);
+
+
+  }
+
+  goal.position.copy(selectedMap.goalPosition);
+  cube.position.set(0, 0.5, 0);
+  velocityY = 0;
+  isOnGround = true
+}
+
+loadMap(0);
+
+function createMapPreview(index) {
+  const map = maps[index];
+  const canvas = document.getElementById(`preview${index}`);
+  if (!canvas) return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(canvas.width, canvas.height);
+
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.1, 100);
+  camera.position.set(5, 7, 10);
+  camera.lookAt(0, 0, 0);
+
+  const light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(5, 7, 10).normalize();
+  scene.add(light);
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+  scene.add(ambient);
+
+
+  //Floor
+  const floorGeo = new THREE.PlaneGeometry(20, 20);
+  const floorMat = new THREE.MeshStandardMaterial({ map: floorTexture, side: THREE.DoubleSide });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  scene.add(floor);
+
+  //Goal
+
+  const goalGeo = new THREE.BoxGeometry(1, 1, 1);
+  const goalMat = new THREE.MeshStandardMaterial({ color: 0x00ffff });
+  const goal = new THREE.Mesh(goalGeo, goalMat);
+  scene.add(goal);
+
+  //obstacles
+  for (const pos of map.obstacles) {
+    const geo = new THREE.BoxGeometry(1, 1, 1 );
+    const mat = new THREE.MeshStandardMaterial({ map: obstacleTexture });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(pos.x, pos.y, pos.z);
+    scene.add(mesh);
+  }
+
+  renderer.render(scene, camera);
+  renderer.setClearColor(0x000000, 0);
+
+
+}
+
+for (let i = 0; i < maps.length; i++) {
+  createMapPreview(i);
+}
 
 const restartButton = document.getElementById('restartButton');
 
@@ -369,3 +525,4 @@ if (cubeBox.intersectsBox(goalBox)) {
 }
 
 animate();
+window.loadMap = loadMap;
