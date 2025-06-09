@@ -224,6 +224,9 @@ window.addEventListener('keydown', (e) => {
         velocityY = 0.2;
         isOnGround = false;
 
+        isJumping = true;
+        jumpAnimationProgress = 0;
+
         if (jumpSound.isPlaying) jumpSound.stop();
         jumpSound.play();
       }
@@ -398,6 +401,10 @@ restartButton.addEventListener('click', () => {
   console.log("Game Restarted!");
 });
 
+//create jump scale animation variables
+let jumpAnimationProgress = 0;
+let isJumping = false;
+
 //Animation loop
 function animate() {
   requestAnimationFrame(animate);
@@ -407,10 +414,28 @@ function animate() {
   velocityY += gravity;
   cube.position.y += velocityY
 
+  //Jump scale animation
+  if (!isOnGround) {
+    jumpAnimationProgress += 0.05;
+    const scaleY = 1 + Math.sin(jumpAnimationProgress * Math.PI) * 0.3;
+    cube.scale.y = scaleY;
+  } else {
+    cube.scale.y = 1;
+  }
+
   //Collision with the floor (y=0.5 is floor)
   if (cube.position.y <= 0.5) {
     cube.position.y = 0.5;
     velocityY = 0;
+
+    if (!isOnGround) {
+      //play landing squash
+      cube.scale.y = 0.7;
+      setTimeout(() => {
+        cube.scale.y = 1;
+      }, 100);
+    }
+
     isOnGround = true;
   }
 
