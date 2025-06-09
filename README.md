@@ -7,11 +7,11 @@ Welcome to the **3D Obstacle Game** – a fun, interactive 3D game built using *
 ##  Visual Overview
 
 ### Main Game
-![Main Game Screenshot](https://github.com/shyamharsh/3DGame/main/public/images/main-game.png)
+![Main Game Screenshot](public/images/main-game.png)
 
 ### Map Previews
-![Map Preview 1](https://github.com/shyamharsh/3DGame/main/public/images/map-preview1.png)
-![Map Preview 2](https://github.com/shyamharsh/3DGame/main/public/images/map-preview2.png)
+![Map Preview 1](public/images/map-preview1.png)
+![Map Preview 2](public/images/map-preview2.png)
 
 ---
 
@@ -57,6 +57,7 @@ project-root/
 ├── package.json
 └── README.md
 
+```
 
 ---
 
@@ -87,19 +88,19 @@ project-root/
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/yourusername/3d-obstacle-game.git
-
+```
 ### 2. Navigate to Project Folder
 ```bash
 cd 3d-obstacle-game
-
+```
 ### 3. Install Dependancies
 ```bash
 npm install
-
+```
 ##  Running the Game Locally
 ```bash
 npm run dev
-
+```
 ##  Folder Details
 - /public/sounds/: Game audio files.
 - /public/textures/: Player, obstacle, and floor textures.
