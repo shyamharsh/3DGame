@@ -7,11 +7,11 @@ Welcome to the **3D Obstacle Game** – a fun, interactive 3D game built using *
 ##  Visual Overview
 
 ### Main Game
-![Main Game Screenshot](public/images/main-game.png)
+![Main Game Screenshot](https://github.com/shyamharsh/3DGame/raw/main/public/images/main-game.png)
 
 ### Map Previews
-![Map Preview 1](public/images/map-preview1.png)
-![Map Preview 2](public/images/map-preview2.png)
+![Map Preview 1](https://github.com/shyamharsh/3DGame/raw/main/public/images/map-preview1.png)
+![Map Preview 2](https://github.com/shyamharsh/3DGame/raw/main/public/images/map-preview2.png)
 
 ---
 
