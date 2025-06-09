@@ -7,11 +7,11 @@ Welcome to the **3D Obstacle Game** – a fun, interactive 3D game built using *
 ##  Visual Overview
 
 ### Main Game
-![Main Game Screenshot](https://github.com/shyamharsh/3DGame/blob/main/public/images/main-game.png)
+![Main Game Screenshot](https://github.com/shyamharsh/3DGame/main/public/images/main-game.png)
 
 ### Map Previews
-![Map Preview 1](https://github.com/shyamharsh/3DGame/blob/main/public/images/map-preview1.png)
-![Map Preview 2](https://github.com/shyamharsh/3DGame/blob/main/public/images/map-preview2.png)
+![Map Preview 1](https://github.com/shyamharsh/3DGame/main/public/images/map-preview1.png)
+![Map Preview 2](https://github.com/shyamharsh/3DGame/main/public/images/map-preview2.png)
 
 ---
 
@@ -35,19 +35,24 @@ Watch the game in action here:
 
 ##  Project Structure
 
+```text
 project-root/
 ├── public/
-│ ├── sounds/
-│ │ ├── background.mp3
-│ │ ├── jump.mp3
-│ │ └── victory.mp3
-│ └── textures/
-│ ├── player.jpg
-│ ├── obstacle.jpg
-│ └── floor.jpg
+│   ├── sounds/
+│   │   ├── background.mp3
+│   │   ├── jump.mp3
+│   │   └── victory.mp3
+│   ├── textures/
+│   │   ├── player.jpg
+│   │   ├── obstacle.jpg
+│   │   └── floor.jpg
+│   └── images/
+│       ├── main-game.png
+│       ├── map-preview1.png
+│       └── map-preview2.png
 ├── src/
-│ ├── main.js
-│ └── style.css
+│   ├── main.js
+│   └── style.css
 ├── index.html
 ├── package.json
 └── README.md
