@@ -72,6 +72,12 @@ volumeSlider.addEventListener('input', () => {
 
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000);//new
+
+//shadows
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 document.body.style.margin = '0'; //Ensure no Scroll
 document.body.appendChild(renderer.domElement);
 
@@ -85,6 +91,11 @@ const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({ map: playerTexture });
 const cube = new THREE.Mesh(geometry, material);
 cube.position.set(6, 0.5, 1);
+
+//add shadow
+cube.castShadow = false;
+cube.receiveShadow = false;
+
 scene.add(cube);
 
 
@@ -167,18 +178,42 @@ goal.position.set(6, 0.5, 8);
 scene.add(goal);
 
 //Light
-const light = new THREE.DirectionalLight(0xffffff, 1);
+const light = new THREE.DirectionalLight(0xffffff, 0.3);
 light.position.set(3, 3, 5).normalize();
+
+light.castShadow = true;
+
 scene.add(light);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
+//const ambientLight = new THREE.AmbientLight(0xffffff, 0.01);
+//scene.add(ambientLight);
+
+//player light
+const spotLight = new THREE.SpotLight(0xffffff, 4, 50, Math.PI / 8, 0.5, 2);
+//            color     ↑ intensity ↑ distance ↑ angle     ↑ penumbra ↑ decay
+spotLight.position.set(cube.position.x, cube.position.y + 2, cube.position.z);
+spotLight.target.position.set(cube.position.x, cube.position.y, cube.position.z);
+
+spotLight.castShadow = true;
+spotLight.shadow.mapSize.width = 1024;
+spotLight.shadow.mapSize.height = 1024;
+spotLight.shadow.camera.near = 0.1;
+spotLight.shadow.camera.far = 25;
+
+spotLight.castShadow = true;
+
+scene.add(spotLight);
+scene.add(spotLight.target);
+
+
 
 //Floor
 const floorGeometry = new THREE.PlaneGeometry(20, 20);
 const floorMaterial = new THREE.MeshStandardMaterial({ map: floorTexture, side: THREE.DoubleSide });
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = -Math.PI / 2;
+//add shadow
+floor.receiveShadow = true;
 scene.add(floor);
 
 //Optional grid helper
@@ -409,6 +444,14 @@ let isJumping = false;
 function animate() {
   requestAnimationFrame(animate);
   updateTimer();
+
+  // pointer light new
+// Inside animate()
+// Inside animate()
+spotLight.position.set(cube.position.x, cube.position.y + 2, cube.position.z);
+spotLight.target.position.set(cube.position.x, cube.position.y, cube.position.z);
+
+
   
   //Apply Gravity
   velocityY += gravity;
