@@ -263,13 +263,13 @@ window.addEventListener('keydown', (e) => {
 
  
 
-//Mouse interaction (move cube to clicked position)
+/*Mouse interaction (move cube to clicked position)
 window.addEventListener('click', (event) => {
   const x = (event.clientX / window.innerWidth) * 2 - 1;
   const y = -(event.clientY / window.innerHeight) * 2 + 1;
   cube.position.x = x * 5;
   cube.position.z = y * 5;
-});
+});*/
 
 const maps = [
   {
