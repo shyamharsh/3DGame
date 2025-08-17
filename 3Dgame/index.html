@@ -1,42 +1,80 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Three.js Game</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body style="margin:0; overflow:hidden;">
-    <div id="audioControls" style="position: absolute; top: 10px; left: 10px; z-index: 1;">
-      <button id="muteButton">Mute</button>
-      <label style="color:white">Volume</label>
-      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.3">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three.js Game Launcher</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body style="margin:0; overflow:hidden;">
 
-    </div>
-    <div id="timer">
-     Time: 0.00s 
-    </div>
-    <div id="mapSelection">
-      <p>Select a Map:</p>
-      <div class="map-option" onclick="loadMap(0)">
-        <canvas id="preview0" width="100" height="100"></canvas>
-        <button>Map 1</button>
-      </div>
-      <div class="map-option" onclick="loadMap(1)">
-        <canvas id="preview1" width="100" height="100"></canvas>
-        <button>Map 2</button>
-      </div>
-      <div class="map-option" onclick="loadMap(2)">
-        <canvas id="preview2" width="100" height="100"></canvas>
-        <button>Map 3</button>
-      </div>  
-    </div>
+    <div id="gameSelectionScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.8); color: white; z-index: 100;">
+      <h1>Select Your Game</h1>
+      <div style="display: flex; gap: 20px;">
+        <button id="playExistingGame" style="padding: 15px 30px; font-size: 1.5em; cursor: pointer;">Play Obstacle Game</button>
+        <button id="playBowlingGame" style="padding: 15px 30px; font-size: 1.5em; cursor: pointer;">Play Bowling Game</button>
+      </div>
+    </div>
 
-    <div id="winModal" style="display: none;">
-      🎉 You Won!<br><br>
-      <button id="restartButton">Restart Game</button>
-    </div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+    <div id="gameContainer" tabindex="0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;"></div> 
+                <div id="audioControls" style="position: absolute; top: 10px; left: 10px; z-index: 10;">
+            <button id="muteButton">Mute</button>
+            <label style="color:white">Volume</label>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.3">
+        </div>
+        <div id="timer">
+            Time: 0.00s
+        </div>
+   
+                <div id="mapSelection">
+            <p>Select a Map:</p>
+            <div class="map-options-container">
+                <div class="map-option">
+                    <canvas id="preview0" width="100" height="100"></canvas>
+                    <button data-map-index="0">Map 1</button>
+                </div>
+                <div class="map-option">
+                    <canvas id="preview1" width="100" height="100"></canvas>
+                    <button data-map-index="1">Map 2</button>
+                </div>
+                <div class="map-option">
+                    <canvas id="preview2" width="100" height="100"></canvas>
+                    <button data-map-index="2">Map 3</button>
+                </div>
+            </div>
+        </div>
+       
+        <div id="winModal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; background-color: rgba(0,0,0,0.9); color: white; padding: 30px; border-radius: 15px; text-align: center; font-size: 2em; display: none;">
+            🎉 You Won!<br><br>
+            <button id="restartButton" style="padding: 10px 20px; font-size: 0.8em; cursor: pointer;">Restart Game</button>
+        </div>
+        <div id="bowlingControls" style="position: absolute; bottom: 10px; left: 10px; z-index: 10; color: white;">
+          <div id="dataDisplay">
+            <p>Velocity: <span id="velocity">0.00</span> m/s</p>
+            <p>Pins Standing: <span id="pinsStanding">10</span></p>
+          </div>
+          <div id="physicsControls" style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+            <div>
+              <label for="forceSlider">Launch Force:</label>
+              <input type="range" id="forceSlider" min="100" max="20000" value="5000">
+              <span id="forceValue">5000</span>
+            </div>
+            <div>
+              <label for="massInput">Ball Mass:</label>
+              <input type="number" id="massInput" min="1" max="10" value="5">
+            </div>
+            <div>
+              <label for="frictionSlider">Friction:</label>
+              <input type="range" id="frictionSlider" min="0" max="1" step="0.01" value="0.05">
+              <span id="frictionValue">0.05</span>
+            </div>
+          </div>
+        </div>  
+    </div>
+
+    <button id="backToMenuButton" style="position: absolute; top: 10px; right: 100px; z-index: 100; padding: 10px 20px; display: none; background-color: #555; color: white; border: none; cursor: pointer; border-radius: 5px;">Back to Menu</button>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
