@@ -162,6 +162,19 @@ export class PlaneController {
         return this.isInPlane;
     }
 
+    // Add this method to the PlaneController class
+forceExit() {
+    if (this.isInPlane) {
+        this.isInPlane = false;
+        this.playerCube.visible = true;
+        this.playerCube.position.copy(this.plane.position);
+        this.move = { x: 0, z: 0 };
+        // Dispatch the exit event to re-enable OrbitControls
+        window.dispatchEvent(new CustomEvent('exitPlaneMode', { detail: { position: this.plane.position.clone() } }));
+    }
+}
+
+
     /**
      * Disposes of Three.js resources and removes event listeners.
      * Call this when the game using this controller is unloaded.

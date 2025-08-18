@@ -423,6 +423,12 @@ window.addEventListener('exitPlaneMode', (event) => {
         const goalBox = new THREE.Box3().setFromObject(goal);
         if (cubeBox.intersectsBox(goalBox)) {
             console.log('🎉 You reached the goal!');
+
+            // Check if the player is in the plane and force an exit
+            if (planeController.inPlane()) {
+                planeController.forceExit();
+            }
+            
             if (bgMusic) bgMusic.stop();
             if (victorySound) victorySound.play();
             timerRunning = false;
