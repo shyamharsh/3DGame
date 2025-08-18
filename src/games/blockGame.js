@@ -247,6 +247,23 @@ export function createExistingGame(containerId) {
     window.addEventListener('keydown', keydownHandler);
     window.addEventListener('keyup', keyupHandler);
 
+    //Add event listners to enterplane and exit plane
+    window.addEventListener('enterPlaneMode', () => {
+    controls.enabled = false;
+    // Hide the player cube when they enter the plane
+    cube.visible = false; 
+});
+
+window.addEventListener('exitPlaneMode', (event) => {
+    controls.enabled = true;
+    // Set the camera's target to the player's new position
+    controls.target.copy(event.detail.position);
+    // You can also adjust the camera position here for a smooth transition back
+    camera.position.set(event.detail.position.x + 5, event.detail.position.y + 5, event.detail.position.z + 10);
+    // Show the player cube again
+    cube.visible = true;
+});
+
     const maps = [
         { name: 'Default Grid', goalPosition: new THREE.Vector3(6, 0.5, 8), obstacles: generateDefaultMapObstacles() },
         { name: 'Map 1 (Zig-Zag)', goalPosition: new THREE.Vector3(6, 0.5, 10), obstacles: generateZigZagMap(4, 5) },
@@ -370,6 +387,7 @@ export function createExistingGame(containerId) {
         isInPlane = planeController.inPlane();
 
         if (!isInPlane) {
+            controls.update();
 
         const forwardVector = new THREE.Vector3();
         camera.getWorldDirection(forwardVector);
@@ -411,7 +429,7 @@ export function createExistingGame(containerId) {
             if (winModal) winModal.style.display = 'block';
         }
         renderer.render(scene, camera);
-        controls.update();
+        //controls.update();
     }
     function updateTimer() {
         if (timerRunning && startTime !== null) {
