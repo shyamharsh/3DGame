@@ -49,9 +49,11 @@ The controls are game-specific.
 
 ### 🎥 Project Demo
 
-Watch the game in action here:
+<div align="center">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/nfW4luAdQUM?si=GKcZv_4JeKrLz3M9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
 
-![3D Game Hub Demo](public/gifs/project-demo.gif)
+Watch the full demo on YouTube: [Live Demo](https://www.youtube.com/watch?v=nfW4luAdQUM)
 
 
 ##  Project Structure
