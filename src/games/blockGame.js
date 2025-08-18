@@ -212,11 +212,13 @@ export function createExistingGame(containerId) {
     let jumpAnimationProgress = 0;
     
     const keydownHandler = (e) => {
+        //Only handle movement keys if not in plane mode
+        if (!planeController.inPlane()) {
         switch (e.key) {
-            case 'ArrowUp': case 'w': case 'W': move.z = -speed; break;
-            case 'ArrowDown': case 's': case 'S': move.z = speed; break;
-            case 'ArrowLeft': case 'a': case 'A': move.x = -speed; break;
-            case 'ArrowRight': case 'd': case 'D': move.x = speed; break;
+            case 'ArrowUp': case 'w': case 'W': move.z = 1; break;// set a flag for forward movement
+            case 'ArrowDown': case 's': case 'S': move.z = -1; break;// Set a flag for backward movement
+            case 'ArrowLeft': case 'a': case 'A': move.x = -1; break;// Set a flag for left movement
+            case 'ArrowRight': case 'd': case 'D': move.x = 1; break;// Set a flag for right movement
             case ' ':
                 if (isOnGround) {
                     velocityY = 0.2;
@@ -227,15 +229,19 @@ export function createExistingGame(containerId) {
                     jumpSound.play();
                 }
                 break;
+            }    
         }
     };
     
     const keyupHandler = (e) => {
-        switch (e.key) {
-            case 'ArrowUp': case 'w': case 'W': if (move.z === -speed) move.z = 0; break;
-            case 'ArrowDown': case 's': case 'S': if (move.z === speed) move.z = 0; break;
-            case 'ArrowLeft': case 'a': case 'A': if (move.x === -speed) move.x = 0; break;
-            case 'ArrowRight': case 'd': case 'D': if (move.x === speed) move.x = 0; break;
+        //Only handle movement keys if not in plane mode
+        if (!planeController.inPlane()) {
+            switch (e.key) {
+                case 'ArrowUp': case 'w': case 'W': if (move.z === 1) move.z = 0; break;
+                case 'ArrowDown': case 's': case 'S': if (move.z === -1) move.z = 0; break;
+                case 'ArrowLeft': case 'a': case 'A': if (move.x === -1) move.x = 0; break;
+                case 'ArrowRight': case 'd': case 'D': if (move.x === 1) move.x = 0; break;
+            }    
         }
     };
     window.addEventListener('keydown', keydownHandler);
@@ -333,6 +339,7 @@ export function createExistingGame(containerId) {
     };
     if (restartButton) restartButton.addEventListener('click', handleRestartClick);
     let animationFrameId;
+
     function animate() {
         animationFrameId = requestAnimationFrame(animate);
         updateTimer();
@@ -361,20 +368,27 @@ export function createExistingGame(containerId) {
         }
         planeController.update();
         isInPlane = planeController.inPlane();
+
+        if (!isInPlane) {
+
         const forwardVector = new THREE.Vector3();
         camera.getWorldDirection(forwardVector);
         forwardVector.y = 0;
         forwardVector.normalize();
+
         const rightVector = new THREE.Vector3();
-        rightVector.crossVectors(camera.up, forwardVector).normalize();
+        rightVector.crossVectors(forwardVector, camera.up).normalize();
+
         const movement = new THREE.Vector3();
-        movement.addScaledVector(forwardVector, move.z);
-        movement.addScaledVector(rightVector, move.x);
+        movement.addScaledVector(forwardVector, move.z * speed);
+        movement.addScaledVector(rightVector, move.x * speed);
+
         const nextPosition = cube.position.clone().add(movement);
         const predictedBox = new THREE.Box3().setFromObject(cube);
         predictedBox.translate(movement);
+
         let willCollide = false;
-        if (!isInPlane) {
+        // Collision detection for obstacles
             for (const obstacle of obstacles) {
                 const obstacleBox = new THREE.Box3().setFromObject(obstacle);
                 if (predictedBox.intersectsBox(obstacleBox)) {
@@ -382,10 +396,11 @@ export function createExistingGame(containerId) {
                     break;
                 }
             }
-        }
+        
         if (!willCollide) {
             cube.position.copy(nextPosition);
         }
+    }    
         const cubeBox = new THREE.Box3().setFromObject(cube);
         const goalBox = new THREE.Box3().setFromObject(goal);
         if (cubeBox.intersectsBox(goalBox)) {
