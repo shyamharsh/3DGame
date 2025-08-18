@@ -47,9 +47,11 @@ The controls are game-specific.
 
 ---
 
-## 🎥 Project Demo
+### 🎥 Project Demo
 
 Watch the game in action here:
+
+![3D Game Hub Demo](public/gifs/project-demo.gif)
 
 
 ##  Project Structure
