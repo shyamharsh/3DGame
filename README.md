@@ -1,4 +1,4 @@
-# 🎮 3D Obstacle Game
+# 🎮 3D Game Hub
 
 Welcome to the **3D Game Hub** – an interactive 3D platform featuring multiple games built using **Three.js** and **CANNON.js**. Select a game from the main menu, control your player, and have fun!
 
