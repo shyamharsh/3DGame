@@ -49,11 +49,9 @@ The controls are game-specific.
 
 ### 🎥 Project Demo
 
-<div align="center">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/nfW4luAdQUM?si=GKcZv_4JeKrLz3M9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
+[![Video Preview](https://github.com/shyamharsh/3Dgame/raw/main/public/gifs/project-demo.gif)](https://www.youtube.com/watch?v=nfW4luAdQUM)
 
-Watch the full demo on YouTube: [Live Demo](https://www.youtube.com/watch?v=nfW4luAdQUM)
+Check out the full video on YouTube.
 
 
 ##  Project Structure
