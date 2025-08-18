@@ -345,6 +345,10 @@ window.addEventListener('exitPlaneMode', (event) => {
         isOnGround = true;
         isJumping = false;
         cube.scale.y = 1;
+
+        //Reset plane position
+        plane.position.set(2, 0.5, 0);
+
         if (winModal) winModal.style.display = 'none';
         if (bgMusic && !bgMusic.isPlaying && !isMuted) {
             bgMusic.play();
