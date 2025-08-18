@@ -51,7 +51,7 @@ The controls are game-specific.
 
 [![Video Preview](https://github.com/shyamharsh/3Dgame/raw/main/public/gifs/project-demo.gif)](https://www.youtube.com/watch?v=nfW4luAdQUM)
 
-Check out the full video on YouTube.
+Check out the full video on YouTube : [Click Here](https://www.youtube.com/watch?v=nfW4luAdQUM)
 
 
 ##  Project Structure
