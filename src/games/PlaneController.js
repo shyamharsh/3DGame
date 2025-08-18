@@ -11,7 +11,7 @@ export class PlaneController {
         this.isInPlane = false;
 
         // Movement state for the plane
-        this.move = { x: 0, z: 0 };
+        this.move = { x: 0, y: 0, z: 0 };
 
         // Create the plane mesh
         const planeGeometry = new THREE.BoxGeometry(2, 0.3, 3);
@@ -88,6 +88,14 @@ export class PlaneController {
                 case 'D':
                     this.move.x = this.planeSpeed; // Move right
                     break;
+                case 'y':
+            case 'Y':
+                this.move.y = this.planeSpeed; // Fly up
+                break;
+            case 'u':
+            case 'U':
+                this.move.y = -this.planeSpeed; // Fly down
+                break;    
             }
         }
     }
@@ -115,6 +123,14 @@ export class PlaneController {
                 case 'D':
                     if (this.move.x === this.planeSpeed) this.move.x = 0;
                     break;
+                case 'y':
+            case 'Y':
+                if (this.move.y === this.planeSpeed) this.move.y = 0;
+                break;
+            case 'u':
+            case 'U':
+                if (this.move.y === -this.planeSpeed) this.move.y = 0;
+                break;    
             }
         }
     }
@@ -136,6 +152,8 @@ export class PlaneController {
             movement.addScaledVector(rightVector, this.move.x);   // 'a' moves left relative to camera's view
 
             this.plane.position.add(movement);
+
+            this.plane.position.y += this.move.y;
 
             // Update spotlight and camera to follow the plane
             this.spotLight.position.set(this.plane.position.x, this.plane.position.y + 2, this.plane.position.z);
